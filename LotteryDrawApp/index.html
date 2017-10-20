@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>LotteryDrawApp</title>
+</head>
+<body>
+    <div>
+        <h2>Lottery Interface</h2>
+        <ul id="lotterydraw" />
+    </div>
+    <div>
+        <h2>Enter A Draw</h2>
+        <p>Enter the details of the draw:</p>
+        <form name="frmDrawData" id="frmDrawDataId">
+            <label for="name">Name(uniqueId)</label>
+            <input type="text" name="name" id="nameId" value="49s"><br />
+            <label for="description">Description"</label>
+            <input type="text" name="description" id="descriptionId" value="49s Lottery"><br />
+            <label for="drawdate">DrawDate</label>
+            <input type="text" name="drawdate" id="drawDateId" value="13 Oct 2017"><br />
+            <label for="totalprimary">TotalPrimary</label>
+            <input type="text" name="totalprimary" id="totalPrimaryId" value="49" size="4" ><br />
+            <label for="minprimary">RangePrimary</label>
+            <input type="text" name="maxPrimary" id="minPrimaryId" value="1" size="4" >
+            <input type="text" name="maxPrimary" id="maxPrimaryId" value="49" size="4" ><br />
+            <label for="totalsecondary">TotalSecondary</label>
+            <input type="text" name="totalsecondary" id="totalSecondaryId" value="2" size="4" ><br />
+            <label for="minsecondary">RangeSecondary</label>
+            <input type="text" name="maxSecondary" id="minSecondaryId" value="1" size="4" >
+            <input type="text" name="maxSecondary" id="maxSecondaryId" value="10" size="4" ><br />
+            <input type="button" value="Submit" id="SubmitDraw" />
+        </form>
+    </div>
+    <br />
+    <div>
+        <p>Enter the winning numbers for the draw:</p>
+        <form name="frmWinningNumbers" id="frmWinningNumbersId">
+            <label for="name">Name(uniqueId)</label>
+            <input type="text" name="name" id="nameId" value="49s"><br />
+            <label for="winningPrimary">WinningPrimary</label>
+            <input type="text" name="winningPrimary1" id="winningPrimary1Id" value="1" size="4" >
+            <input type="text" name="winningPrimary2" id="winningPrimary2Id" value="2" size="4" >
+            <input type="text" name="winningPrimary3" id="winningPrimary3Id" value="3" size="4" >
+            <input type="text" name="winningPrimary4" id="winningPrimary4Id" value="4" size="4" >
+            <input type="text" name="winningPrimary5" id="winningPrimary5Id" value="5" size="4" ><br />
+            <label for="winningSecondary">WinningSecondary</label>
+            <input type="text" name="winningSecondary1" id="winningSecondary1Id" value="1" size="4" >
+            <input type="text" name="winningSecondary2" id="winningSecondary2Id" value="2" size="4" ><br />
+            <input type="button" value="Submit" id="WinningNumbers" />
+        </form>
+    </div>
+    <br />
+    <div>
+        <h2>Search Draw By Date</h2>
+        <p>Enter the date of the draw:</p>
+        <form name="frmDrawDate" id="frmDrawDateId">
+            <label for="drawdate">DrawDate</label>
+            <input type="text" name="drawdate" id="drawDateId" value="13 Oct 2017"><br />
+            <input type="button" value="Submit" id="SubmitDate" />
+        </form>
+    </div>
+
+    <script src="Scripts/jquery-3.2.1.min.js"></script>
+    <script>
+    $(document).ready(function () {
+        $("#SubmitDraw").click(function (e) {
+            var dataToPost = {
+                Name: frmDrawDataId.nameId.value,
+                Description: frmDrawDataId.descriptionId.value,
+                DrawDate: frmDrawDataId.drawDateId.value,
+                TotalPrimary: frmDrawDataId.totalPrimaryId.value,
+                RangePrimary: {Item1: frmDrawDataId.minPrimaryId.value, Item2: frmDrawDataId.maxPrimaryId.value},
+                TotalSecondary: frmDrawDataId.totalSecondaryId.value,
+                RangeSecondary: {Item1: frmDrawDataId.minSecondaryId.value, Item2: frmDrawDataId.maxSecondaryId.value}
+            }
+            $.ajax({
+                url: 'api/lotterydraw/',
+                contentType: 'application/json; charset=utf-8',
+                type: 'POST',
+                timeout: '12000', 
+                datatype: 'text',
+                data: JSON.stringify(dataToPost),
+                success: function (data) {
+                    var obj = jQuery.parseJSON(data);
+                    alert('Status: ' + obj.Status + ' - ' + obj.Message);
+                }
+            });
+        });
+        $("#WinningNumbers").click(function (e) {
+            var dataToPost = {
+                Name: frmWinningNumbersId.nameId.value,
+                WinningPrimary: { Item1: frmWinningNumbersId.winningPrimary1Id.value, Item2: frmWinningNumbersId.winningPrimary2Id.value, Item3: frmWinningNumbersId.winningPrimary3Id.value, Item4: frmWinningNumbersId.winningPrimary4Id.value, Item5: frmWinningNumbersId.winningPrimary5Id.value },
+                WinningSecondary: { Item1: frmWinningNumbersId.winningSecondary1Id.value, Item2: frmWinningNumbersId.winningSecondary2Id.value }
+            }
+            $.ajax({
+                url: 'api/lotterydraw/AddWinningNumbers/',
+                contentType: 'application/json; charset=utf-8',
+                type: 'POST',
+                timeout: '12000',
+                datatype: 'text',
+                data: JSON.stringify(dataToPost),
+                success: function (data) {
+                    var obj = jQuery.parseJSON(data);
+                    alert('Status: ' + obj.Status + ' - ' + obj.Message);
+                }
+            });
+        });
+    });
+
+    $("#SubmitDate").click(function (e) {
+        var dataToPost = {
+            DrawDate: frmDrawDataId.drawDateId.value
+        }
+        $.ajax({
+            url: 'api/lotterydraw/SearchLotter/',
+            contentType: 'application/json; charset=utf-8',
+            type: 'POST',
+            timeout: '12000',
+            datatype: 'text',
+            data: JSON.stringify(dataToPost),
+            success: function (data) {
+                var obj = jQuery.parseJSON(data);
+                alert('Status: ' + obj.Status + ' - ' + obj.Message);
+            }
+        });
+    });
+    </script>
+</body>
+</html>
